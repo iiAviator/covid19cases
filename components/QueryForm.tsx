@@ -1,5 +1,7 @@
 import { fetchData } from "../api/covid";
 
+let data;
+
 export default function QueryForm({setQuery, query, setData, setQueryScope, queryScope}) {
 
     const handleChange = event => {
@@ -8,7 +10,11 @@ export default function QueryForm({setQuery, query, setData, setQueryScope, quer
     }
 
     const handleSubmit = () => {
-        let data = fetchData(convertQueryScope(queryScope) + query);
+        if (query.toLowerCase() == 'world') {
+            data = fetchData('all');
+        } else {
+            data = fetchData(convertQueryScope(queryScope) + query);
+        }
         
         data.then((data) => {
             setData(data);
@@ -18,7 +24,7 @@ export default function QueryForm({setQuery, query, setData, setQueryScope, quer
     const convertQueryScope = (queryScope) => {
         switch (queryScope) {
             case 'world':
-                return 'all';
+                return '';
             case 'country':
                 return 'countries/';
             case 'state':
