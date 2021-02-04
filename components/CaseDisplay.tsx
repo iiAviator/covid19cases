@@ -1,10 +1,26 @@
+import { Box, Text, Flex, Container, Spacer, Grid } from "@chakra-ui/react";
+
 export default function CaseDisplay({data}) {
     return (
-        <>
-            <h1>Total Cases: { parseNumber(data['cases']) }</h1>
-            <h1>Total Deaths: { parseNumber(data['deaths']) }</h1>
-            <h1>Total Active: { parseNumber(data['active']) }</h1>
-            <h1>Total Recovered: { parseNumber(data['recovered']) }</h1>
+        <>  
+            <Flex display="flex" justifyContent="center">
+                <Box flex="1" boxShadow="dark-lg" width="15rem" backgroundColor="blue.500" color="white" p="2rem" rounded="md">
+                    <Text fontWeight="bold" fontSize="3xl">Total Cases: </Text>
+                    <Text fontSize="xl">{ parseNumber(data['cases']) }</Text>
+                </Box>
+                <Box flex="1" boxShadow="dark-lg" width="15rem" backgroundColor="blue.500" color="white" p="2rem" rounded="md">
+                    <Text fontWeight="bold" fontSize="3xl">Total Deaths: </Text>
+                    <Text fontSize="xl">{ parseNumber(data['deaths']) }</Text>
+                </Box>
+                <Box flex="1" boxShadow="dark-lg" width="15rem" backgroundColor="blue.500" color="white" p="2rem" rounded="md">
+                    <Text fontWeight="bold" fontSize="3xl">Total Active Cases: </Text>
+                    <Text fontSize="xl">{ parseNumber(data['active']) }</Text>
+                </Box>
+                <Box flex="1" boxShadow="dark-lg" width="15rem" backgroundColor="blue.500" color="white" p="2rem" rounded="md">
+                    <Text fontWeight="bold" fontSize="3xl">Total Recovered Cases: </Text>
+                    <Text fontSize="xl">{ parseNumber(data['recovered']) }</Text>
+                </Box>
+            </Flex>
         </>
     )
 }

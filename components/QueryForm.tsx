@@ -1,4 +1,6 @@
 import { fetchData } from "../api/covid";
+import { IconButton, Flex, Space, Container, Select, Input, Button } from "@chakra-ui/react";
+import { SearchIcon } from "@chakra-ui/icons";
 
 let data;
 
@@ -12,8 +14,9 @@ export default function QueryForm({setQuery, query, setData, setQueryScope, quer
     const handleSubmit = () => {
         if (query.toLowerCase() == 'world') {
             data = fetchData('all');
-        } else {
-            data = fetchData(convertQueryScope(queryScope) + query);
+        }
+        else {
+            data = fetchData(queryScope + query);
         }
         
         data.then((data) => {
@@ -21,31 +24,19 @@ export default function QueryForm({setQuery, query, setData, setQueryScope, quer
         });
     }
 
-    const convertQueryScope = (queryScope) => {
-        switch (queryScope) {
-            case 'world':
-                return '';
-            case 'country':
-                return 'countries/';
-            case 'state':
-                return 'states/';
-            case 'continent':
-                return 'continents/'
-        }
-    }
-
     return (
         <>
-            <div>
-                <input value={query} onChange={handleChange}/>
-                <input type="submit" value="Search" onClick={handleSubmit}/>
-                <select name="scope" id="scope-select" onChange={(event) => setQueryScope(event.target.value)}>
-                    <option value="world">World</option>
-                    <option value="continent">Continent</option>
-                    <option value="country">Country</option>
-                    <option value="state">US States</option>
-                </select>
-            </div>
+            <Flex my="3rem" mx="1rem" justifyContent="center">
+                <Input value={query} onChange={handleChange} width="12.5rem"/>
+                <IconButton aria-label="Search database" color="white" backgroundColor="blue.500" icon={<SearchIcon />} onClick={handleSubmit} />
+                <Select name="scope" id="scope-select" onChange={(event) => setQueryScope(event.target.value)} width="10rem">
+                    <option value="">World</option>
+                    <option value="continents/">Continent</option>
+                    <option value="countries/">Country</option>
+                    <option value="states/">US States</option>
+                    {/* <option value="jhucsse/counties/">US Counties</option> */}
+                </Select>
+            </Flex>
         </>
     )
 }
