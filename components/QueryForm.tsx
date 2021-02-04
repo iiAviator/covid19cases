@@ -1,5 +1,5 @@
 import { fetchData } from "../api/covid";
-import { IconButton, Flex, Space, Container, Select, Input, Button } from "@chakra-ui/react";
+import { IconButton, Flex, Container, Select, Input, Button } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 
 let data;
