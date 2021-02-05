@@ -4,24 +4,27 @@ import { useState } from 'react';
 import QueryForm from '../components/QueryForm';
 import { Container, Heading } from "@chakra-ui/react";
 
-export default function Home({fetchedData}) {
+export default function Home({fetchedData, fetchedWorldData}) {
   
   const [query, setQuery] = useState("World");
   const [queryScope, setQueryScope] = useState("");
   const [data, setData] = useState(fetchedData);
+  const [countryData, setCountryData] = useState([]);
+  const [flag, setFlag] = useState("");
+  const [name, setName] = useState("World");
 
   return (
-    <div>
+     <div id="main">
       <Head>
         <title>Covid19Stats</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container my="2rem" textAlign="center">
-        <Heading>Covid19 Cases</Heading>
+      <Container fontFamily="Staatliches" my="2rem" textAlign="center">
+        <Heading fontFamily="Staatliches">Covid19 Cases</Heading>
       </Container>
       <div>
-        <QueryForm setQuery={setQuery} query={query} setData={setData} setQueryScope={setQueryScope} queryScope={queryScope}/>
-        <CaseDisplay data={data}/>
+        <QueryForm setQuery={setQuery} query={query} setData={setData} setQueryScope={setQueryScope} queryScope={queryScope} setFlag={setFlag} setName={setName} setCountryData={setCountryData}/>
+        <CaseDisplay data={data} flag={flag} name={name} countryData={countryData}/>
       </div>
     </div>
   )
@@ -33,7 +36,7 @@ Home.getInitialProps = async ({ ctx }) => {
   
   console.log(fetchedData);
   return {
-    fetchedData
+    fetchedData,
   }
 }
 
