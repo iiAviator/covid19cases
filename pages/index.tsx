@@ -5,7 +5,7 @@ import QueryForm from '../components/QueryForm';
 import { Container, Heading } from "@chakra-ui/react";
 
 export default function Home({fetchedData}) {
-
+  
   const [query, setQuery] = useState("World");
   const [queryScope, setQueryScope] = useState("");
   const [data, setData] = useState(fetchedData);
