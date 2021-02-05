@@ -1,5 +1,4 @@
 import { Box, Text, Flex, Container, Spacer, Grid } from "@chakra-ui/react";
-import PieCaseDisplay from "../components/PieCaseDisplay";
 
 export default function CaseDisplay({data}) {
     return (
@@ -22,8 +21,6 @@ export default function CaseDisplay({data}) {
                     <Text fontSize="xl">{ parseNumber(data['recovered']) }</Text>
                 </Box>
             </Flex>
-
-            <PieCaseDisplay/>
         </>
     )
 }
