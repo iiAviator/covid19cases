@@ -1,18 +1,15 @@
 import Head from 'next/head'
-import CaseDisplay from '../components/CaseDisplay';
+import CaseDisplay, { parseNumber } from '../components/CaseDisplay';
 import { useState } from 'react';
 import QueryForm from '../components/QueryForm';
 import { Container, Heading } from "@chakra-ui/react";
 
-export default function Home({fetchedData, fetchedWorldData}) {
+export default function Home({fetchedData}) {
   
   const [query, setQuery] = useState("World");
   const [queryScope, setQueryScope] = useState("");
   const [data, setData] = useState(fetchedData);
-  const [countryData, setCountryData] = useState([]);
-  const [flag, setFlag] = useState("");
-  const [name, setName] = useState("World");
-
+  const [error, setError] = useState("");
   return (
      <div id="main">
       <Head>
@@ -23,8 +20,8 @@ export default function Home({fetchedData, fetchedWorldData}) {
         <Heading fontFamily="Staatliches">Covid19 Cases</Heading>
       </Container>
       <div>
-        <QueryForm setQuery={setQuery} query={query} setData={setData} setQueryScope={setQueryScope} queryScope={queryScope} setFlag={setFlag} setName={setName} setCountryData={setCountryData}/>
-        <CaseDisplay data={data} flag={flag} name={name} countryData={countryData}/>
+        <QueryForm setQuery={setQuery} query={query} setData={setData} setQueryScope={setQueryScope} queryScope={queryScope} setError={setError}/>
+        <CaseDisplay data={data}/>
       </div>
     </div>
   )
@@ -32,20 +29,27 @@ export default function Home({fetchedData, fetchedWorldData}) {
 
 Home.getInitialProps = async ({ ctx }) => {
   const res = await fetch("https://disease.sh/v3/covid-19/all");
-  const fetchedData = await res.json();
-  
-  console.log(fetchedData);
+  const data= await res.json();
+  const fetchedData = {
+    "flag": "https://upload.wikimedia.org/wikipedia/commons/2/2f/Flag_of_the_United_Nations.svg",
+    "name": "World",
+    "code": "",
+    "population": parseNumber(data['population']),
+    "data": {
+      "cases": data['cases'],
+      "todayCases": data['todayCases'],
+      "casesPerMillion": data['casesPerOneMillion'],
+      "deaths": data['deaths'],
+      "todayDeaths": data['todayDeaths'],
+      "deathsPerMillion": data['deathsPerOneMillion'],
+      "active": data['active'],
+      "recovered": data['recovered'],
+      "tests":  data['tests'],
+      "testsPerMillion": data['testsPerOneMillion']
+    }
+  }
+
   return {
     fetchedData,
   }
 }
-
-// export async function getStaticProps(context) {
-//   const res = await fetch("https://disease.sh/v3/covid-19/all");
-//   const fetchedData = await res.json();
-  
-//   console.log(fetchedData);
-//   return {
-//     fetchedData
-//   }
-// }

@@ -1,61 +1,92 @@
-import { fetchCountryCodeData, fetchWorldData, fetchCovidData } from "../api/data";
+import { fetchCovidData, convertStateName, handleCapitalization } from "../api/data";
+import { parseNumber } from "../components/CaseDisplay"
 import { IconButton, Flex, Container, Select, Input, Button } from "@chakra-ui/react";
 import { SearchIcon } from "@chakra-ui/icons";
 
 let data;
 let worldData;
+const UNFlag = "https://upload.wikimedia.org/wikipedia/commons/2/2f/Flag_of_the_United_Nations.svg";
+const info = {
+    "name": "",
+    "code": "",
+    "flag": "",
+    "continent": "",
+    "population": 0,
+    "data": {
+        "cases": 0,
+        "todayCases": 0,
+        "casesPerMillion": 0,
+        "deaths": 0,
+        "todayDeaths": 0,
+        "deathsPerMillion": 0,
+        "active": 0,
+        "recovered": 0,
+        "tests": 0,
+        "testsPerMillion": 0
+    }
+}
 
-export default function QueryForm({setQuery, query, setData, setQueryScope, queryScope, setFlag, setName, setCountryData}) {
+export default function QueryForm({setQuery, query, setData, setQueryScope, queryScope, setError}) {
 
     const handleChange = event => {
-        console.log(event.target.value);
         setQuery(event.target.value);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        console.log(`${query} ${queryScope}`)
         if (query.toLowerCase() == 'world') {
             data = fetchCovidData('all');
         }
         else {
-            data = fetchCovidData(queryScope + query);
-            worldData = fetchWorldData(handleQuery(query));
+            data = fetchCovidData(queryScope + query);        
         }
         
-        data.then((data) => {
-            setData(data);
-        });
-
-        worldData.then((data) => {
-            console.log(data);
-            setFlag(data['flag']);
-            setName(data['name']);
-            setCountryData([data['region'],
-            data['subregion'],
-            data['population'],
-            fetchCountryCodeData()[1][handleCapitalization(query)]
-        })
-    }
-
-    const handleQuery = (query) => {
-        const codes = fetchCountryCodeData()[1];
-        return codes[handleCapitalization(query)];
-    }
-
-    const handleCapitalization = (query) => {
-        let wordList = query.split(" ");
-        let finalWord = "";
-        wordList.forEach(word => {
-            finalWord += word.charAt(0).toUpperCase() + word.substring(1, word.length) + " "
-        });
-
-        console.log(finalWord.trim());
-        return finalWord.trim();
+        if (data) {
+            data.then(async (data) => {
+                console.log("Raw Data: ");
+                console.log(data);
+                if (query.toLowerCase() == 'world') {
+                    info['flag'] = UNFlag;
+                    info['name'] = "World";
+                    info['code'] = "";
+                } else if (queryScope.toLowerCase() == "states/") {
+                    const flag = `http://flags.ox3.in/svg/us/${convertStateName(query).toLowerCase()}.svg`
+                    info['flag'] = flag;
+                    info['name'] = handleCapitalization(query);
+                    info['code'] = convertStateName(handleCapitalization(query));
+                } else {
+                    info['name'] = data['country'];
+                    info['flag'] = data['countryInfo']['flag'];
+                    info['code'] = data['countryInfo']['iso2'];
+                }
+    
+                info['continent'] = data['continent'];
+                info['population'] = data['population'];
+                info['data']['cases'] = data['cases'];
+                info['data']['todayCases'] = data['todayCases'];
+                info['data']['casesPerMillion'] = data['casesPerOneMillion'];
+                info['data']['deaths'] = data['deaths'];
+                info['data']['todayDeaths'] = data['todayDeaths'];
+                info['data']['deathsPerMillion'] = data['deathsPerOneMillion'];
+                info['data']['active'] = data['active'];
+                info['data']['recovered'] = data['recovered'];
+                info['data']['tests'] = data['tests'];
+                info['data']['testsPerMillion'] = data['testsPerOneMillion'];
+    
+                console.log("Parsed Data:");
+                console.log(info);
+    
+                await setData(info);
+            });
+        } else {
+            console.log("Error");
+        }
     }
 
     return (
         <>
             <Flex fontFamily="sans-serif" my="3rem" mx="1rem" justifyContent="center">
-                <Input value={query} onChange={handleChange} width="12.5rem"/>
+                <Input value={query} onChange={(e) => handleChange(e)} width="12.5rem"/>
                 <Select fontFamily="sans-serif" name="scope" id="scope-select" onChange={(event) => setQueryScope(event.target.value)} width="10rem" color="white">
                     <option value="">World</option>
                     <option value="continents/">Continent</option>
@@ -63,7 +94,7 @@ export default function QueryForm({setQuery, query, setData, setQueryScope, quer
                     <option value="states/">US States</option>
                     {/* <option value="jhucsse/counties/">US Counties</option> */}
                 </Select>
-                <IconButton aria-label="Search database" color="white" backgroundColor="blue.500" icon={<SearchIcon />} onClick={handleSubmit} />
+                <IconButton aria-label="Search database" color="white" backgroundColor="blue.500" icon={<SearchIcon />} onClick={() => handleSubmit()} />
             </Flex>
         </>
     )
